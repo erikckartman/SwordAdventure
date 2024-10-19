@@ -9,7 +9,7 @@ public class SwordScript : MonoBehaviour
     [SerializeField] private Vector3 offset;
     public SpriteRenderer spriteRenderer;
     public BoxCollider2D collisionsword;
-    [SerializeField] private Sword sword;
+    [SerializeField] private Walking sword;
 
     private void Awake()
     {

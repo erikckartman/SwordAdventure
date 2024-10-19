@@ -10,7 +10,7 @@ public class Camera : MonoBehaviour
     [SerializeField] private float z;
     private void Update()
     {
-        diff = new Vector3(4, 3, z);
+        diff = new Vector3(0, 0, z);
 
         transform.position = player.position + diff;
     }

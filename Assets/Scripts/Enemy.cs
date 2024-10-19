@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     private Rigidbody2D rb;
+    [SerializeField] private Transform player;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -19,8 +20,8 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    private void Update()
     {
-        rb.velocity = new Vector3(-3f, rb.velocity.y);  
+        rb.velocity = new Vector3(player.position.x, player.position.y);  
     }
 }

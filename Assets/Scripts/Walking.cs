@@ -6,41 +6,66 @@ public class Walking : MonoBehaviour
 {
     private Rigidbody2D rb;
     private float speed = 3f;
-    private float jump = 10f;
 
-    public bool isGrounded;
-    public bool canMove;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundLayer;
-    private Sword sword;
-    void Start()
+    [SerializeField] private GameObject sword;
+    private float attackDuration = 0.5f;
+    private float swingSpeed = 200f;
+    [HideInInspector] public bool isAttacking = false;
+
+    private float defaultRotatAm = 0f;
+
+    private void Start()
     {
-        rb = this.gameObject.GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
-    void Update()
+    private void Update()
     {
         float inputX = Input.GetAxis("Horizontal");
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.7f, groundLayer);
+        float inputY = Input.GetAxis("Vertical");
 
-        if (canMove && isGrounded)
+        rb.velocity = new Vector2(inputX * speed, inputY * speed);
+
+        if (Input.GetKeyDown(KeyCode.X) && !isAttacking)
         {
-            rb.velocity = new Vector2(inputX * speed, rb.velocity.y); 
-
-            if (inputX > 0)
-            {
-                transform.rotation = Quaternion.Euler(0, 0, 0);
-            }
-            else if (inputX < 0)
-            {
-                transform.rotation = Quaternion.Euler(0, -180, 0);
-            }
+            StartCoroutine(Beat());
         }
 
-        if(Input.GetKeyDown(KeyCode.Z) && isGrounded)
+        if(Input.GetKeyDown(KeyCode.UpArrow))
         {
-            rb.velocity = new Vector2(inputX * (speed/3), jump);
+            defaultRotatAm = -180f; ;
+        }
+        else if(Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            defaultRotatAm = 90f;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            defaultRotatAm = 180f;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            defaultRotatAm = 0f;
+        }
+    }
+
+    private IEnumerator Beat()
+    {
+        isAttacking = true;
+
+        float rotationAmount = defaultRotatAm;
+
+        while (rotationAmount < defaultRotatAm + 90f)
+        {
+            float rotationStep = swingSpeed * Time.deltaTime;
+            sword.transform.Rotate(0, 0, -rotationStep);
+            rotationAmount += rotationStep;
+            yield return null;
         }
 
-        canMove = isGrounded;        
+        yield return new WaitForSeconds(attackDuration);
+
+        sword.transform.rotation = Quaternion.identity;
+
+        isAttacking = false;
     }
 }
